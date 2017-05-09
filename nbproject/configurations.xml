@@ -60,6 +60,7 @@
                    kind="IMPORTANT_FILES_FOLDER">
       <itemPath>Makefile</itemPath>
     </logicalFolder>
+    <itemPath>LICENSE.txt</itemPath>
   </logicalFolder>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
@@ -93,6 +94,8 @@
       <item path="Intersect_Meshes_3D.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="Intersect_Meshes_3D.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="LICENSE.txt" ex="false" tool="3" flavor2="0">
       </item>
       <item path="Mesh_2D.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -186,6 +189,8 @@
       <item path="Intersect_Meshes_3D.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="Intersect_Meshes_3D.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="LICENSE.txt" ex="false" tool="3" flavor2="0">
       </item>
       <item path="Mesh_2D.cpp" ex="false" tool="1" flavor2="0">
       </item>
