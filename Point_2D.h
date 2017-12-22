@@ -63,10 +63,6 @@ namespace VCAD_lib {
     };
     
     // exception safety: no-throw guarantee
-    const bool operator==(const Point_2D&, const Point_2D&);
-    // exception safety: no-throw guarantee
-    const bool operator!=(const Point_2D&, const Point_2D&);
-    // exception safety: no-throw guarantee
     const Point_2D operator+(const Point_2D&, const Vector_2D&);
     // exception safety: no-throw guarantee
     const Point_2D operator-(const Point_2D&, const Vector_2D&);

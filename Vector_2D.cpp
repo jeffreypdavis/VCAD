@@ -95,16 +95,6 @@ namespace VCAD_lib
         return b * (dot_product(a, b) / pow(length ,2));
     }
     
-    const bool operator==(const Vector_2D& v1, const Vector_2D& v2)
-    {
-        return (v1.get_x() == v2.get_x() && v1.get_y() == v2.get_y());
-    }
-    
-    const bool operator!=(const Vector_2D& v1, const Vector_2D& v2)
-    {
-        return !(v1 == v2);
-    }
-    
     const Vector_2D operator+(const Vector_2D& v1, const Vector_2D& v2)
     {
         return Vector_2D(v1.get_x() + v2.get_x(), v1.get_y() + v2.get_y());

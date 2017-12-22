@@ -73,7 +73,7 @@ namespace VCAD_lib
         {
             ifs.close();
             if (tolower(test[0]) == 's' && tolower(test[1]) == 'o' && 
-                    tolower(test[2]) == 'l' & tolower(test[3]) == 'i' &&
+                    tolower(test[2]) == 'l' && tolower(test[3]) == 'i' &&
                     tolower(test[4]) == 'd')
                 // ascii stl file
                 return read_stl_ascii(mesh, filename, comment, clockwise_order, ignore_unv);
@@ -785,48 +785,96 @@ namespace VCAD_lib
             ofs << endl;
             if (ofs.fail())
                 throw STL_Error("Error writing to file: " + filename);
-            ofs << "      vertex ";
-            if (ofs.fail())
-                throw STL_Error("Error writing to file: " + filename);
-            ofs << it->get_point2()->get_x();
-            if (ofs.fail())
-                throw STL_Error("Error writing to file: " + filename);
-            ofs << ' ';
-            if (ofs.fail())
-                throw STL_Error("Error writing to file: " + filename);
-            ofs << it->get_point2()->get_y();
-            if (ofs.fail())
-                throw STL_Error("Error writing to file: " + filename);
-            ofs << ' '; 
-            if (ofs.fail())
-                throw STL_Error("Error writing to file: " + filename);
-            ofs << it->get_point2()->get_z();
-            if (ofs.fail())
-                throw STL_Error("Error writing to file: " + filename);
-            ofs << endl;
-            if (ofs.fail())
-                throw STL_Error("Error writing to file: " + filename);
-            ofs << "      vertex ";
-            if (ofs.fail())
-                throw STL_Error("Error writing to file: " + filename);
-            ofs << it->get_point3()->get_x();
-            if (ofs.fail())
-                throw STL_Error("Error writing to file: " + filename);
-            ofs << ' ';
-            if (ofs.fail())
-                throw STL_Error("Error writing to file: " + filename);
-            ofs << it->get_point3()->get_y();
-            if (ofs.fail())
-                throw STL_Error("Error writing to file: " + filename);
-            ofs << ' ';
-            if (ofs.fail())
-                throw STL_Error("Error writing to file: " + filename);
-            ofs << it->get_point3()->get_z();
-            if (ofs.fail())
-                throw STL_Error("Error writing to file: " + filename);
-            ofs << endl;
-            if (ofs.fail())
-                throw STL_Error("Error writing to file: " + filename);
+            if (clockwise_order) // swap points 2 and 3
+            {
+                ofs << "      vertex ";
+                if (ofs.fail())
+                    throw STL_Error("Error writing to file: " + filename);
+                ofs << it->get_point3()->get_x();
+                if (ofs.fail())
+                    throw STL_Error("Error writing to file: " + filename);
+                ofs << ' ';
+                if (ofs.fail())
+                    throw STL_Error("Error writing to file: " + filename);
+                ofs << it->get_point3()->get_y();
+                if (ofs.fail())
+                    throw STL_Error("Error writing to file: " + filename);
+                ofs << ' ';
+                if (ofs.fail())
+                    throw STL_Error("Error writing to file: " + filename);
+                ofs << it->get_point3()->get_z();
+                if (ofs.fail())
+                    throw STL_Error("Error writing to file: " + filename);
+                ofs << endl;
+                if (ofs.fail())
+                    throw STL_Error("Error writing to file: " + filename);
+                ofs << "      vertex ";
+                if (ofs.fail())
+                    throw STL_Error("Error writing to file: " + filename);
+                ofs << it->get_point2()->get_x();
+                if (ofs.fail())
+                    throw STL_Error("Error writing to file: " + filename);
+                ofs << ' ';
+                if (ofs.fail())
+                    throw STL_Error("Error writing to file: " + filename);
+                ofs << it->get_point2()->get_y();
+                if (ofs.fail())
+                    throw STL_Error("Error writing to file: " + filename);
+                ofs << ' '; 
+                if (ofs.fail())
+                    throw STL_Error("Error writing to file: " + filename);
+                ofs << it->get_point2()->get_z();
+                if (ofs.fail())
+                    throw STL_Error("Error writing to file: " + filename);
+                ofs << endl;
+                if (ofs.fail())
+                    throw STL_Error("Error writing to file: " + filename);
+            }
+            else
+            {
+                ofs << "      vertex ";
+                if (ofs.fail())
+                    throw STL_Error("Error writing to file: " + filename);
+                ofs << it->get_point2()->get_x();
+                if (ofs.fail())
+                    throw STL_Error("Error writing to file: " + filename);
+                ofs << ' ';
+                if (ofs.fail())
+                    throw STL_Error("Error writing to file: " + filename);
+                ofs << it->get_point2()->get_y();
+                if (ofs.fail())
+                    throw STL_Error("Error writing to file: " + filename);
+                ofs << ' '; 
+                if (ofs.fail())
+                    throw STL_Error("Error writing to file: " + filename);
+                ofs << it->get_point2()->get_z();
+                if (ofs.fail())
+                    throw STL_Error("Error writing to file: " + filename);
+                ofs << endl;
+                if (ofs.fail())
+                    throw STL_Error("Error writing to file: " + filename);
+                ofs << "      vertex ";
+                if (ofs.fail())
+                    throw STL_Error("Error writing to file: " + filename);
+                ofs << it->get_point3()->get_x();
+                if (ofs.fail())
+                    throw STL_Error("Error writing to file: " + filename);
+                ofs << ' ';
+                if (ofs.fail())
+                    throw STL_Error("Error writing to file: " + filename);
+                ofs << it->get_point3()->get_y();
+                if (ofs.fail())
+                    throw STL_Error("Error writing to file: " + filename);
+                ofs << ' ';
+                if (ofs.fail())
+                    throw STL_Error("Error writing to file: " + filename);
+                ofs << it->get_point3()->get_z();
+                if (ofs.fail())
+                    throw STL_Error("Error writing to file: " + filename);
+                ofs << endl;
+                if (ofs.fail())
+                    throw STL_Error("Error writing to file: " + filename);
+            }
             ofs << "    endloop";
             if (ofs.fail())
                 throw STL_Error("Error writing to file: " + filename);

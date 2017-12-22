@@ -44,10 +44,9 @@ namespace VCAD_lib
     const int Valid_Mesh_2D::Facet_2D_Hasher::operator ()(const Facet_2D& facet) const
     {
         hash<Point_3D::Measurement> hasher;
-        int hash_value = 0;
-        shared_ptr<Point_2D> pt = facet.get_point1();
         
-        hash_value = (31 * hasher(pt->get_x())) ^ (43 * hasher(pt->get_y()));
+        shared_ptr<Point_2D> pt = facet.get_point1();
+        int hash_value = (31 * hasher(pt->get_x())) ^ (43 * hasher(pt->get_y()));
         pt = facet.get_point2();
         hash_value = hash_value ^ (31 * hasher(pt->get_x())) ^ (43 * hasher(pt->get_y()));
         pt = facet.get_point3();
@@ -70,56 +69,44 @@ namespace VCAD_lib
         
         if (p1p2.length() >= p1p3.length() && p1p2.length() > p2p3.length())
         {
-            // p1p2 is the hypotenuse
+            // p1p2 is the largest side
             if (p1p3.length() > p2p3.length())
             {
-                // use p1p3 is the base
-                Vector_2D::Angle_Meas angle = angle_between(p1p2,p1p3);
-                Vector_2D::Measurement height = p1p2.length() * sin(angle);
-                return 0.5 * height * p1p3.length();
+                // p1p3 is the next largest
+                return fabs(0.5 * cross_product(p1p2, p1p3));
             }
             else
             {
-                // use p2p3 as the base
-                Vector_2D::Angle_Meas angle = angle_between(-p1p2,p2p3);
-                Vector_2D::Measurement height = p1p2.length() * sin(angle);
-                return 0.5 * height * p2p3.length();
+                // p2p3 is the next largest
+                return fabs(0.5 * cross_product(-p1p2, p2p3));
             }
         }
         else if (p1p3.length() >= p1p2.length() && p1p3.length() >= p2p3.length())
         {
-            // p1p3 is the hypotenuse
+            // p1p3 is the largest side
             if (p1p2.length() > p2p3.length())
             {
-                // use p1p2 as the base
-                Vector_2D::Angle_Meas angle = angle_between(p1p2,p1p3);
-                Vector_2D::Measurement height = p1p3.length() * sin(angle);
-                return 0.5 * height * p1p2.length();
+                // p1p2 is the next largest
+                return fabs(0.5 * cross_product(p1p3, p1p2));
             }
             else
             {
-                // use p2p3 as the base
-                Vector_2D::Angle_Meas angle = angle_between(-p1p3,-p2p3);
-                Vector_2D::Measurement height = p1p3.length() * sin(angle);
-                return 0.5 * height * p2p3.length();
+                // p2p3 is the next largest
+                return fabs(0.5 * cross_product(-p1p3, -p2p3));
             }
         }
         else
         {
-            // p2p3 is the hypotenuse
+            // p2p3 is the largest side
             if (p1p2.length() > p1p3.length())
             {
-                // use p1p2 as the base
-                Vector_2D::Angle_Meas angle = angle_between(-p1p2,p2p3);
-                Vector_2D::Measurement height = p2p3.length() * sin(angle);
-                return 0.5 * height * p1p2.length();
+                // p1p2 is the next largest
+                return fabs(0.5 * cross_product(p2p3, -p1p2));
             }
             else
             {
-                // use p1p3 as the base
-                Vector_2D::Angle_Meas angle = angle_between(-p1p3,-p2p3);
-                Vector_2D::Measurement height = p2p3.length() * sin(angle);
-                return 0.5 * height * p1p3.length();
+                // p1p3 is the next largest
+                return fabs(0.5 * cross_product(-p2p3, -p1p3));
             }
         }
     }

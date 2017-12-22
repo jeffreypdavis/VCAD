@@ -77,56 +77,44 @@ namespace VCAD_lib
         
         if (p1p2.length() >= p1p3.length() && p1p2.length() > p2p3.length())
         {
-            // p1p2 is the hypotenuse
+            // p1p2 is the largest
             if (p1p3.length() > p2p3.length())
             {
-                // use p1p3 is the base
-                Vector_3D::Angle_Meas angle = angle_between(p1p2,p1p3);
-                Vector_3D::Measurement height = p1p2.length() * sin(angle);
-                return 0.5 * height * p1p3.length();
+                // p1p3 is the next largest
+                return fabs(0.5 * cross_product(p1p2, p1p3).length());
             }
             else
             {
-                // use p2p3 as the base
-                Vector_3D::Angle_Meas angle = angle_between(-p1p2,p2p3);
-                Vector_3D::Measurement height = p1p2.length() * sin(angle);
-                return 0.5 * height * p2p3.length();
+                // p2p3 is the next largest
+                return fabs(0.5 * cross_product(-p1p2, p2p3).length());
             }
         }
         else if (p1p3.length() >= p1p2.length() && p1p3.length() >= p2p3.length())
         {
-            // p1p3 is the hypotenuse
+            // p1p3 is the largest
             if (p1p2.length() > p2p3.length())
             {
-                // use p1p2 as the base
-                Vector_3D::Angle_Meas angle = angle_between(p1p2,p1p3);
-                Vector_3D::Measurement height = p1p3.length() * sin(angle);
-                return 0.5 * height * p1p2.length();
+                // p1p2 is the next largest
+                return fabs(0.5 * cross_product(p1p3, p1p2).length());
             }
             else
             {
-                // use p2p3 as the base
-                Vector_3D::Angle_Meas angle = angle_between(-p1p3,-p2p3);
-                Vector_3D::Measurement height = p1p3.length() * sin(angle);
-                return 0.5 * height * p2p3.length();
+                // p2p3 is the next largest
+                return fabs(0.5 * cross_product(-p1p3,-p2p3).length());
             }
         }
         else
         {
-            // p2p3 is the hypotenuse
+            // p2p3 is the largest
             if (p1p2.length() > p1p3.length())
             {
-                // use p1p2 as the base
-                Vector_3D::Angle_Meas angle = angle_between(-p1p2,p2p3);
-                Vector_3D::Measurement height = p2p3.length() * sin(angle);
-                return 0.5 * height * p1p2.length();
+                // p1p2 is the next largest
+                return fabs(0.5 * cross_product(p2p3, -p1p2).length());
             }
             else
             {
-                // use p1p3 as the base
-                Vector_3D::Angle_Meas angle = angle_between(-p1p3,-p2p3);
-                Vector_3D::Measurement height = p2p3.length() * sin(angle);
-                return 0.5 * height * p1p3.length();
+                // p1p3 is the next largest
+                return fabs(0.5 * cross_product(-p2p3, -p1p3).length());
             }
         }
     }

@@ -65,10 +65,6 @@ namespace VCAD_lib {
     // exception safety: strong guarantee - throws length_error if b.length() is zero
     const Vector_2D orthogonal_projection(const Vector_2D& a, const Vector_2D& b);
     // exception safety: no throw
-    const bool operator==(const Vector_2D&, const Vector_2D&);
-    // exception safety: no throw
-    const bool operator!=(const Vector_2D&, const Vector_2D&);
-    // exception safety: no throw
     const Vector_2D operator+(const Vector_2D&, const Vector_2D&); // translate
     // exception safety: no throw
     const Vector_2D operator-(const Vector_2D&, const Vector_2D&); // translate

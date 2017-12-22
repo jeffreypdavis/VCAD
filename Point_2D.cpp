@@ -200,16 +200,6 @@ namespace VCAD_lib
         return *this;
     }
     
-    const bool operator==(const Point_2D& p1, const Point_2D& p2)
-    {
-        return (p1.get_x() == p2.get_x() && p1.get_y() == p2.get_y());
-    }
-    
-    const bool operator!=(const Point_2D& p1, const Point_2D& p2)
-    {
-        return !(p1 == p2);
-    }
-    
     const Point_2D operator+(const Point_2D& p, const Vector_2D& v)
     {
         return Point_2D(p.get_x() + v.get_x(), p.get_y() + v.get_y());

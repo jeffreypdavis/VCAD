@@ -180,7 +180,6 @@ namespace VCAD_lib
 #ifdef DEBUG_SIMPLIFY_MESH_2D_NEW_FACETS
         cout << "Simplify_Mesh_2D::Pt_Remover::Segments::find_connecting_segment begin\n";
 #endif
-        bool found(false);
         int shared_point;
 #ifdef DEBUG_SIMPLIFY_MESH_2D_NEW_FACETS
         for (vector<Line_Segment>::const_iterator t_it = segments.begin(); t_it != segments.end(); ++t_it)
@@ -202,7 +201,6 @@ namespace VCAD_lib
 #ifdef DEBUG_SIMPLIFY_MESH_2D_NEW_FACETS
                     cout << "Simplify_Mesh_2D::Pt_Remover::Segments::find_connecting_segment found segment\n";
 #endif
-                    found = true;
                     ++it; // move to next segment or end
                     break;
                 }
@@ -223,7 +221,7 @@ namespace VCAD_lib
                 continue;
             }
 
-            int shared_point = segment.shares_pt(*it);
+            shared_point = segment.shares_pt(*it);
             if (shared_point != -1)
             {
 #ifdef DEBUG_SIMPLIFY_MESH_2D_NEW_FACETS
@@ -270,8 +268,7 @@ namespace VCAD_lib
     }
 
     const bool Simplify_Mesh_2D::Pt_Remover::Segments::is_seg_valid(const int p1, const int p2, 
-            const vector<Facet_2D>& orig_facets, const Mesh_2D::const_point_iterator pt_begin, 
-            const Mesh_2D::const_point_iterator pt_end, const Point_2D::Measurement precision) const
+            const vector<Facet_2D>& orig_facets, const Point_2D::Measurement precision) const
     {
 #ifdef DEBUG_SIMPLIFY_MESH_2D_NEW_FACETS
         cout << "Simplify_Mesh_2D::Pt_Remover::Segments::is_seg_valid begin\n";
@@ -469,8 +466,10 @@ namespace VCAD_lib
         for (vector<Facet_2D>::const_iterator it = orig_facets.begin(); it != orig_facets.end(); ++it)
         {
             bool pt_is_on_side(false);
-            if (it->contains_point(half_way_pt, pt_is_on_side, precision))
+            if (it->contains_point(half_way_pt, pt_is_on_side, precision)) {
                 hwp_found = true;
+                break;
+            }
         }
 #ifdef DEBUG_SIMPLIFY_MESH_2D_NEW_FACETS
         if (hwp_found)
@@ -646,7 +645,7 @@ namespace VCAD_lib
 #ifdef DEBUG_SIMPLIFY_MESH_2D_NEW_FACETS
                 cout << "Simplify_Mesh_2D::Pt_Remover::form_new_facets formed segment3: (" << seg3_p1 << ", " << seg3_p2 << ")\n";
 #endif
-                if (segments.is_seg_valid(seg3_p1, seg3_p2, orig_facets, orig_mesh->point_begin(), orig_mesh->point_end(), orig_mesh->get_precision()))
+                if (segments.is_seg_valid(seg3_p1, seg3_p2, orig_facets, orig_mesh->get_precision()))
                 {
 #ifdef DEBUG_SIMPLIFY_MESH_2D_NEW_FACETS
                     cout << "Simplify_Mesh_2D::Pt_Remover::form_new_facets seg3 is valid\n";

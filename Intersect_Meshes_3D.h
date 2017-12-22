@@ -103,7 +103,7 @@ namespace VCAD_lib
              * facet1: the facet1 used in the intersection
              * facet2: the facet2 used in the intersection
              */
-            const bool validate(const Facet_3D& facet1, const Facet_3D& facet2);
+            void validate(const Facet_3D& facet1, const Facet_3D& facet2);
         private:
             vector<Intersect_Point> i_points; // vector to hold intersect points
             /*
@@ -320,11 +320,6 @@ namespace VCAD_lib
              * Checks if the point values are the same
              */
             const bool matches(const Point_3D& p1, const Point_3D& p2) const;
-            /*
-             * add a facet by points.  Used in form_side_facets
-             */
-            void push_back(const shared_ptr<Point_3D>& p1, const shared_ptr<Point_3D>& p2, 
-                    const shared_ptr<Point_3D>& p3);
         };
 
 	/*
@@ -584,7 +579,7 @@ namespace VCAD_lib
              * internal_pts: the internal intersect points
              */
             void gen_internal_segs(const I_Pt_List& intersect_points, 
-                    const Intersecting_Facet_Side_Pts intersecting_side_pts);
+                    const Intersecting_Facet_Side_Pts& intersecting_side_pts);
             
             /*
              * Create a link segment

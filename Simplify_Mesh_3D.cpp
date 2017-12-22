@@ -257,7 +257,6 @@ namespace VCAD_lib
 #ifdef DEBUG_SIMPLIFY_MESH_3D_NEW_FACETS
         cout << "Simplify_Mesh_3D::Pt_Remover::Segments::find_connecting_segment begin\n";
 #endif
-        bool found(false);
         int shared_point;
 #ifdef DEBUG_SIMPLIFY_MESH_3D_NEW_FACETS
         for (vector<Line_Segment>::const_iterator t_it = segments.begin(); t_it != segments.end(); ++t_it)
@@ -281,7 +280,6 @@ namespace VCAD_lib
 #ifdef DEBUG_SIMPLIFY_MESH_3D_NEW_FACETS
                     cout << "Simplify_Mesh_3D::Pt_Remover::Segments::find_connecting_segment found segment\n";
 #endif
-                    found = true;
                     ++it; // move to next segment or end
                     break;
                 }
@@ -302,7 +300,7 @@ namespace VCAD_lib
                 continue;
             }
 
-            int shared_point = segment.shares_pt(*it);
+            shared_point = segment.shares_pt(*it);
             if (shared_point != -1)
             {
 #ifdef DEBUG_SIMPLIFY_MESH_3D_NEW_FACETS
@@ -1039,8 +1037,8 @@ namespace VCAD_lib
 #endif
             for (Pt_Remover::perimeter_pt_iter pp_it = it->pt_begin(); pp_it != it->pt_end(); ++pp_it)
             {
-                Mesh_3D::const_point_iterator temp_pt_it = mesh.point_begin();
-                advance(temp_pt_it, *pp_it);
+//                Mesh_3D::const_point_iterator temp_pt_it = mesh.point_begin();
+//                advance(temp_pt_it, *pp_it);
 #ifdef DEBUG_SIMPLIFY_MESH_3D
                 cout << "Simplify_Mesh_3D::operator() testing if perimeter point can be removed: " << *pp_it << " x: " << (*temp_pt_it)->get_x() << " y: " << (*temp_pt_it)->get_y() << " z: " << (*temp_pt_it)->get_z() << "\n";
 #endif

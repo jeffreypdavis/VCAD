@@ -98,7 +98,6 @@ namespace VCAD_lib
                  * is_segment_valid
                  */
                 const bool is_seg_valid(const int p1, const int p2, const vector<Facet_2D>& orig_facets, 
-                        const Mesh_2D::const_point_iterator pt_begin, const Mesh_2D::const_point_iterator pt_end, 
                         const Point_2D::Measurement precision) const;
                 /*
                  * process segments that have been used

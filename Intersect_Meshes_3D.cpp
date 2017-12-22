@@ -411,7 +411,7 @@ namespace VCAD_lib
         return ++it;
     }
     
-    const bool Intersect_Meshes_3D::I_Pt_List::validate(const Facet_3D& facet1, 
+    void Intersect_Meshes_3D::I_Pt_List::validate(const Facet_3D& facet1, 
             const Facet_3D& facet2)
     {
 #ifdef DEBUG_INTERSECT_MESHES_3D_I_PT_LIST
@@ -846,7 +846,7 @@ namespace VCAD_lib
 #endif
             intersect_f2_side_to_f1(Location::p1p3, intersect_pts);
         }
-        else if (intersection_ct = 1)
+        else if (intersection_ct == 1)
         {
 #ifdef DEBUG_INTERSECT_MESHES_3D_I_PT_LOCATOR
             cout << "Intersect_Meshes_3D::I_Pt_Locator::locate checking f2.p3\n";
@@ -969,53 +969,6 @@ namespace VCAD_lib
     const shared_ptr<Point_3D> Intersect_Meshes_3D::Facets::get_point(int index) const
     {
         return *(point_list.begin() + index);
-    }
-    
-    void Intersect_Meshes_3D::Facets::push_back(const shared_ptr<Point_3D>& p1, 
-            const shared_ptr<Point_3D>& p2, const shared_ptr<Point_3D>& p3)
-    {
-#ifdef DEBUG_INTERSECT_MESHES_3D_FACETS
-        cout << "Intersect_Meshes_3D::Facets::push_back(p1, p2, p3) begin\n";
-        cout << "Intersect_Meshes_3D::Facets::push_back p1 x: " << p1->get_x() << " y: " << 
-                p1->get_y() << " z: " << p1->get_z() << " p2 x: " << p2->get_x() << " y: " << 
-                p2->get_y() << " z: " << p2->get_z() << " p3 x: " << p3->get_x() << " y: " << 
-                p3->get_y() << " z: " << p3->get_z() << "\n";
-#endif
-        int p1_index(-1);
-        int p2_index(-1);
-        int p3_index(-1);
-        int index(0);
-        for (vector<shared_ptr<Point_3D>>::const_iterator p_it = point_list.begin(); p_it != point_list.end(); ++p_it)
-        {
-            if (matches(*p1, **p_it))
-                p1_index = index;
-            else if (matches(*p2, **p_it))
-                p2_index = index;
-            else if (matches(*p3, **p_it))
-                p3_index = index;
-            ++index;
-        }
-        if (p1_index == -1)
-        {
-            point_list.push_back(p1);
-            p1_index = index;
-            ++index;
-        }
-        if (p2_index == -1)
-        {
-            point_list.push_back(p2);
-            p2_index = index;
-            ++index;
-        }
-        if (p3_index == -1)
-        {
-            point_list.push_back(p3);
-            p3_index = index;
-        }
-#ifdef DEBUG_INTERSECT_MESHES_3D_FACETS
-        cout << "Intersect_Meshes_3D::Facets::push_back(p1, p2, p3) adding facet p1: " << p1_index << " p2: " << p2_index << " p3: " << p3_index << "\n";
-#endif
-        facet_list.push_back(Facet(p1_index, p2_index, p3_index));
     }
     
     void Intersect_Meshes_3D::Facets::push_back(const Facet_3D& facet)
@@ -1379,7 +1332,7 @@ namespace VCAD_lib
         Line_Segment seg(p1, p2, Location::internal);
         if (segments.end() == find(segments.begin(), segments.end(), seg))
         {
-            segments.push_back(Line_Segment(p1, p2, Location::internal));
+            segments.push_back(seg);
             sort(segments.begin(), segments.end(), Segment_Sort());
         }
     }
@@ -1428,7 +1381,6 @@ namespace VCAD_lib
 #ifdef DEBUG_INTERSECT_MESHES_3D_FACET_BUILDER_SEGMENTS
         cout << "Intersect_Meshes_3D::Facet_Builder::Segments::find_connecting_segment begin\n";
 #endif
-        bool found(false);
         shared_ptr<Point_3D> shared_point;
         if (!segments.empty())
         {
@@ -1454,7 +1406,6 @@ namespace VCAD_lib
 #ifdef DEBUG_INTERSECT_MESHES_3D_FACET_BUILDER_SEGMENTS
                         cout << "Intersect_Meshes_3D::Facet_Builder::Segments::find_connecting_segment found segment\n";
 #endif
-                        found = true;
                         ++it; // move to next segment or end
                         break;
                     }
@@ -1663,29 +1614,23 @@ namespace VCAD_lib
                 {
 #ifdef DEBUG_INTERSECT_MESHES_3D_FACET_BUILDER_SEGMENTS
                     cout << "Intersect_Meshes_3D::Facet_Builder::Segments::does_seg_intersect removed external segment shares point with segment\n";
+                    cout << "Intersect_Meshes_3D::Facet_Builder::Segments::does_seg_intersect testing segment end points\n";
 #endif
-
-                    if ((*it).location == side_loc)
+                    shared_ptr<Point_3D> non_common_pt((*it).point1 == shared_pt ? (*it).point2 : (*it).point1);
+                    if (is_pt_on_vector(*non_common_pt, *segment.point1, *segment.point2, precision))
                     {
 #ifdef DEBUG_INTERSECT_MESHES_3D_FACET_BUILDER_SEGMENTS
-                        cout << "Intersect_Meshes_3D::Facet_Builder::Segments::does_seg_intersect testing segment end points\n";
+                        cout << "Intersect_Meshes_3D::Facet_Builder::Segments::does_seg_intersect segment intersects removed external segment\n";
 #endif
-                        shared_ptr<Point_3D> non_common_pt((*it).point1 == shared_pt ? (*it).point2 : (*it).point1);
-                        if (is_pt_on_vector(*non_common_pt, *segment.point1, *segment.point2, precision))
-                        {
+                        return true;
+                    }
+                    non_common_pt = segment.point1 == shared_pt ? segment.point2 : segment.point1;
+                    if (is_pt_on_vector(*non_common_pt, *(*it).point1, *(*it).point2, precision))
+                    {
 #ifdef DEBUG_INTERSECT_MESHES_3D_FACET_BUILDER_SEGMENTS
-                            cout << "Intersect_Meshes_3D::Facet_Builder::Segments::does_seg_intersect segment intersects removed external segment\n";
+                        cout << "Intersect_Meshes_3D::Facet_Builder::Segments::does_seg_intersect segment intersects removed external segment\n";
 #endif
-                            return true;
-                        }
-                        non_common_pt = segment.point1 == shared_pt ? segment.point2 : segment.point1;
-                        if (is_pt_on_vector(*non_common_pt, *(*it).point1, *(*it).point2, precision))
-                        {
-#ifdef DEBUG_INTERSECT_MESHES_3D_FACET_BUILDER_SEGMENTS
-                            cout << "Intersect_Meshes_3D::Facet_Builder::Segments::does_seg_intersect segment intersects removed external segment\n";
-#endif
-                            return true;
-                        }
+                        return true;
                     }
                 }
             }
@@ -1747,6 +1692,7 @@ namespace VCAD_lib
 #endif
                         return true;
                     }
+                    non_common_pt = segment.point1 == shared_pt ? segment.point2 : segment.point1;
                     if (is_pt_on_vector(*non_common_pt, *(*it).point1, *(*it).point2, precision))
                     {
 #ifdef DEBUG_INTERSECT_MESHES_3D_FACET_BUILDER_SEGMENTS
@@ -2007,7 +1953,7 @@ namespace VCAD_lib
     }
     
     void Intersect_Meshes_3D::Facet_Builder::gen_internal_segs(const I_Pt_List& intersect_points, 
-            const Intersecting_Facet_Side_Pts intersecting_side_pts)
+            const Intersecting_Facet_Side_Pts& intersecting_side_pts)
     {
 #ifdef DEBUG_INTERSECT_MESHES_3D_FACET_BUILDER
         cout << "Intersect_Meshes_3D::Facet_Builder::gen_internal_segs begin for_facet1: " << for_facet1 << "\n";
@@ -2046,24 +1992,24 @@ namespace VCAD_lib
 #endif
         
         // process remaining single_i_points to form any further internal segments
-        if (t_intersect_pts.size() == 1)
-        {
-            const Intersect_Point* ip1(&*t_intersect_pts.begin());
-#ifdef DEBUG_INTERSECT_MESHES_3D_FACET_BUILDER
-            cout << "Intersect_Meshes_3D::Facet_Builder::gen_internal_segs t_intersect_pts ip1 x: " << 
-                    ip1->pt->get_x() << " y: " << ip1->pt->get_y() << " z: " << ip1->pt->get_z() << 
-                    " f1_loc: " << ip1->f1_loc << " f2_loc: " << ip1->f2_loc << "\n";
-#endif
-        }
-        else if (t_intersect_pts.size() == 2)
+//        if (t_intersect_pts.size() == 1)
+//        {
+//#ifdef DEBUG_INTERSECT_MESHES_3D_FACET_BUILDER
+//            const Intersect_Point* ip1(&*t_intersect_pts.begin());
+//            cout << "Intersect_Meshes_3D::Facet_Builder::gen_internal_segs t_intersect_pts ip1 x: " << 
+//                    ip1->pt->get_x() << " y: " << ip1->pt->get_y() << " z: " << ip1->pt->get_z() << 
+//                    " f1_loc: " << ip1->f1_loc << " f2_loc: " << ip1->f2_loc << "\n";
+//#endif
+//        }
+        if (t_intersect_pts.size() == 2)
         {
             // process points
-            I_Pt_List leftover_pts;
-            I_Pt_List::const_iterator t_it = t_intersect_pts.begin();
-            leftover_pts.push_back(*t_it);
-            ++t_it;
-            leftover_pts.push_back(*t_it);
-            process_two_i_pts(leftover_pts);
+//            I_Pt_List leftover_pts;
+//            I_Pt_List::const_iterator t_it = t_intersect_pts.begin();
+//            leftover_pts.push_back(*t_it);
+//            ++t_it;
+//            leftover_pts.push_back(*t_it);
+            process_two_i_pts(t_intersect_pts);
         }
         else if (t_intersect_pts.size() == 3)
         {
@@ -2121,7 +2067,7 @@ namespace VCAD_lib
                     throw runtime_error("invalid number of single intersect points: 3");
             }
         }
-        else if (t_intersect_pts.size() != 0)
+        else if (t_intersect_pts.size() > 3)
             throw runtime_error("invalid number of facet intersect_points");
         
 #ifdef DEBUG_INTERSECT_MESHES_3D_FACET_BUILDER
@@ -2339,7 +2285,7 @@ namespace VCAD_lib
                         if (!segments.does_seg_intersect(seg, orig_facet, p1p2_pts, p1p3_pts, p2p3_pts, internal_pts, precision))
                         {
                             segments.add_internal_segment(seg.point1, seg.point2);
-                            return &*find(segments.begin(), segments.end(), Line_Segment(seg.point1, seg.point2, Location::internal));
+                            return &*find(segments.begin(), segments.end(), seg);
 //                            return &*(--segments.internal_segs_end());
                         }
                     }
@@ -2349,7 +2295,7 @@ namespace VCAD_lib
                         if (!segments.does_seg_intersect(seg, orig_facet, p1p2_pts, p1p3_pts, p2p3_pts, internal_pts, precision))
                         {
                             segments.add_internal_segment(seg.point1, seg.point2);
-                            return &*find(segments.begin(), segments.end(), Line_Segment(seg.point1, seg.point2, Location::internal));
+                            return &*find(segments.begin(), segments.end(), seg);
 //                            return &*(--segments.internal_segs_end());
                         }
                     }
@@ -2359,12 +2305,12 @@ namespace VCAD_lib
                         if (!segments.does_seg_intersect(seg, orig_facet, p1p2_pts, p1p3_pts, p2p3_pts, internal_pts, precision))
                         {
                             segments.add_internal_segment(seg.point1, seg.point2);
-                            return &*find(segments.begin(), segments.end(), Line_Segment(seg.point1, seg.point2, Location::internal));
+                            return &*find(segments.begin(), segments.end(), seg);
 //                            return &*(--segments.internal_segs_end());
                         }
                     }
                     // try other internal points last chance
-                    for (vector<shared_ptr<Point_3D>>::const_iterator internal_pt_it = p1p2_pts.begin(); internal_pt_it != p1p2_pts.end(); ++internal_pt_it)
+                    for (vector<shared_ptr<Point_3D>>::const_iterator internal_pt_it = internal_pts.begin(); internal_pt_it != internal_pts.end(); ++internal_pt_it)
                     {
                         if ((*internal_pt_it)->get_x() == pt->get_x() && (*internal_pt_it)->get_y() == pt->get_y() && (*internal_pt_it)->get_z() == pt->get_z()) // don't process the same internal point
                             continue;
@@ -2372,7 +2318,7 @@ namespace VCAD_lib
                         if (!segments.does_seg_intersect(seg, orig_facet, p1p2_pts, p1p3_pts, p2p3_pts, internal_pts, precision))
                         {
                             segments.add_internal_segment(seg.point1, seg.point2);
-                            return &*find(segments.begin(), segments.end(), Line_Segment(seg.point1, seg.point2, Location::internal));
+                            return &*find(segments.begin(), segments.end(), seg);
 //                            return &*(--segments.internal_segs_end());
                         }
                     }
@@ -2387,7 +2333,7 @@ namespace VCAD_lib
         }
         else
             segments.add_internal_segment(seg.point1, seg.point2);
-        return &*find(segments.begin(), segments.end(), Line_Segment(seg.point1, seg.point2, Location::internal));
+        return &*find(segments.begin(), segments.end(), seg);
 //        return &*(--segments.internal_segs_end());
     }
     
@@ -2928,7 +2874,7 @@ namespace VCAD_lib
             
             segp = segments.find_connecting_segment(segment1, 0, shared_pt, precision);
 //            cout << "segp=" << segp << "\n";
-            cout.flush();
+//            cout.flush();
             while (segp != 0)
             {
                 Line_Segment segment2(*segp);
@@ -3403,7 +3349,7 @@ namespace VCAD_lib
                     // check if facet is in the same general direction and closer 
                     // than the *f1_it facet
                     // see if line v from p intersects *it facet
-                    bool pt_on_side(false);
+                    pt_on_side = false;
                     Facet_3D f(facets1.get_point(it->get_p1_index()), facets1.get_point(it->get_p2_index()), facets1.get_point(it->get_p3_index()));
                     if (intersect_line_facet_plane(v, f2_ip, f, i_point, precision) && 
                             is_pt_on_vector(i_point, f2_ip, f1_ip, precision) && 
